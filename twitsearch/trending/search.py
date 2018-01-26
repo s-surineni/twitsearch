@@ -60,4 +60,14 @@ def match_tweet_text(text_val):
     })
     s = Search().query(q)
     response = s.execute()
-    return response
+    hits_list = []
+    for a_hit in response:
+        hit_dict = {}
+        hit_dict['tweet_text'] = a_hit.tweet_text
+        hit_dict['user_name'] = a_hit.user_name
+        hit_dict['screen_name'] = a_hit.screen_name
+        hit_dict['created_at_in_sec'] = a_hit.created_at_in_sec
+        hit_dict['retweet_count'] = a_hit.retweet_count
+        hit_dict['favorite_count'] = a_hit.favorite_count
+        hits_list.append(hit_dict)
+    return hits_list

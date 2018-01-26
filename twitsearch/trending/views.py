@@ -1,3 +1,5 @@
+import json
+
 from django.http import HttpResponse
 
 from .models import Trend, Tweet
@@ -15,6 +17,9 @@ def search_tweets(request):
     request_params = request.GET
     if request_params.get('text'):
         text_val = request_params.get('text')
-        print('response', match_tweet_text(text_val))
+        response = match_tweet_text(text_val)
+        for hit in response:
+            print(hit)
+        print('response', json.dumps('hi'))
     # print('request.GET', request.GET)
-    return HttpResponse('Hello')
+    return HttpResponse(json.dumps(response))
