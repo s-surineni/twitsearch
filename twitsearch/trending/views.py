@@ -15,11 +15,15 @@ def find_trends(request):
 
 def search_tweets(request):
     request_params = request.GET
+    sort_by = None
+    if request_params.get('sortBy'):
+        sort_by = request_params.get('sortBy')
+
     if request_params.get('text'):
         text_val = request_params.get('text')
-        response = match_tweet_text('tweet_text', text_val)
+        response = match_tweet_text('tweet_text', text_val, sort_by)
     elif request_params.get('name'):
         name = request_params.get('name')
-        response = match_tweet_text('screen_name', name)
+        response = match_tweet_text('screen_name', name, sort_by)
     # print('request.GET', request.GET)
     return HttpResponse(json.dumps(response))

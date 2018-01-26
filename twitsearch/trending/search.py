@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch
 
 from elasticsearch.helpers import bulk
 
-from elasticsearch_dsl import Date, DocType, Integer, Text, Search
+from elasticsearch_dsl import Date, DocType, Integer, Search, Keyword, Text
 from elasticsearch_dsl.query import Match, Q
 from elasticsearch_dsl.connections import connections
 
@@ -22,8 +22,8 @@ class TrendIndex(DocType):
 
 class TweetIndex(DocType):
     tweet_text = Text()
-    user_name = Text()
-    screen_name = Text()
+    user_name = Keyword()
+    screen_name = Keyword()
     created_at_in_sec = Integer()
     retweet_count = Integer()
     favorite_count = Integer()
@@ -52,17 +52,26 @@ def search(name):
     return response
 
 
-def match_tweet_text(key, val):
-    query_dict = {'query': {'match': {'tweet_text': 'shri'}},
-                  "sort": {
-                      "created_at_in_sec": {
-                          "order": "desc",
-                          "unmapped_type": 'integer'}}}
-    q = Q({
-        "match": {
-            key: val
-        }
-    })
+def match_tweet_text(key, val, sort_by=None):
+    text_vals = ['screen_name', 'tweet_text', 'user_name']
+    # int_vals = ['created_at_in_sec', 'favorite_count', 'retweet_count']
+    sort_dict = {'sort': {}}
+    sort_dict['sort'][sort_by] = {'order': 'asc'}
+
+    if sort_by:
+        if sort_by in text_vals:
+            sort_dict['sort'][sort_by]['unmapped_type'] = 'text'
+        else:
+            sort_dict['sort'][sort_by]['unmapped_type'] = 'integer'
+
+    query_dict = {'query': {'match': {key: val}}}
+    query_dict.update(sort_dict)
+
+    # q = Q({
+    #     "match": {
+    #         key: val
+    #     }
+    # })
     s = Search.from_dict(query_dict)
     print('search dict', s.to_dict())
     response = s.execute()
