@@ -1,6 +1,6 @@
 from django.db import models
 
-from .search import TrendIndex
+from .search import TweetIndex, TrendIndex
 
 
 class Trend(models.Model):
@@ -29,3 +29,19 @@ class Tweet(models.Model):
     created_at_in_sec = models.IntegerField()
     retweet_count = models.IntegerField()
     favorite_count = models.IntegerField()
+
+    def __str__(self):
+        return self.tweet_text
+
+    def indexing(self):
+        obj = TweetIndex(
+            meta={'id': self.id},
+            tweet_text=self.tweet_text,
+            user_name=self.user_name,
+            screen_name=self.screen_name,
+            created_at_in_sec=self.created_at_in_sec,
+            retweet_count=self.retweet_count,
+            favorite_count=self.favorite_count
+        )
+        obj.save()
+        return obj.to_dict(include_meta=True)
