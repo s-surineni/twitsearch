@@ -53,12 +53,18 @@ def search(name):
 
 
 def match_tweet_text(key, val):
+    query_dict = {'query': {'match': {'tweet_text': 'shri'}},
+                  "sort": {
+                      "created_at_in_sec": {
+                          "order": "desc",
+                          "unmapped_type": 'integer'}}}
     q = Q({
         "match": {
             key: val
         }
     })
-    s = Search().query(q)
+    s = Search.from_dict(query_dict)
+    print('search dict', s.to_dict())
     response = s.execute()
     hits_list = []
     for a_hit in response:
