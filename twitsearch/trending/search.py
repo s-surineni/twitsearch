@@ -52,10 +52,10 @@ def search(name):
     return response
 
 
-def match_tweet_text(text_val):
+def match_tweet_text(key, val):
     q = Q({
         "match": {
-            "tweet_text": text_val
+            key: val
         }
     })
     s = Search().query(q)

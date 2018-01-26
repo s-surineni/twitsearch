@@ -17,9 +17,9 @@ def search_tweets(request):
     request_params = request.GET
     if request_params.get('text'):
         text_val = request_params.get('text')
-        response = match_tweet_text(text_val)
-        for hit in response:
-            print(hit)
-        print('response', json.dumps('hi'))
+        response = match_tweet_text('tweet_text', text_val)
+    elif request_params.get('name'):
+        name = request_params.get('name')
+        response = match_tweet_text('screen_name', name)
     # print('request.GET', request.GET)
     return HttpResponse(json.dumps(response))
