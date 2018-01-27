@@ -117,10 +117,16 @@ def filter_tweets_by_date(date_range):
 
 
 def filter_text_fields(text_search):
+    if text_search[1] == 'starts with':
+        regexpr = text_search[1] + '.*'
+    elif text_search[1] == 'ends with':
+        regexpr = '.*' + text_search[1]
+    else:
+        regexpr = '.*' + text_search[1] + '.*'
     query_dict = {
         "query": {
             "regexp": {
-               text_search[0]: "Ja.*"
+               text_search[0]: regexpr
             }
         }
     }
