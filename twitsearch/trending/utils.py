@@ -1,6 +1,7 @@
 import twitter
 
 from .models import Trend, Tweet
+from datetime import datetime
 
 # twitter_api = twitter.Api(consumer_key='lxsoRrSGKvc8jSVITeLO3ygWb',
 #                           consumer_secret='LRIjpICLID65jr5kHXPAHNabGnkomvdwLtuNTd6o4tKMmg4koG',
@@ -26,6 +27,7 @@ def refresh_trends():
             tweet_entity.user_name = a_trnd_twt.user.name
             tweet_entity.screen_name = a_trnd_twt.user.screen_name
             tweet_entity.created_at_in_sec = a_trnd_twt.created_at_in_seconds
+            tweet_entity.created_at = datetime.fromtimestamp(a_trnd_twt.created_at_in_seconds)
             tweet_entity.retweet_count = a_trnd_twt.retweet_count
             tweet_entity.favorite_count = a_trnd_twt.favorite_count
             tweet_entity.save()
@@ -34,3 +36,4 @@ def refresh_trends():
         trend_entity.url = a_trend.url
         trend_entity.time = a_trend.timestamp
         trend_entity.save()
+        break

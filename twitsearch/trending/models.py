@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 
 from .search import TweetIndex, TrendIndex
@@ -27,6 +29,7 @@ class Tweet(models.Model):
     user_name = models.CharField(max_length=50)
     screen_name = models.CharField(max_length=50)
     created_at_in_sec = models.IntegerField()
+    created_at = models.DateTimeField(default=datetime.now())
     retweet_count = models.IntegerField()
     favorite_count = models.IntegerField()
 
@@ -40,6 +43,7 @@ class Tweet(models.Model):
             user_name=self.user_name,
             screen_name=self.screen_name,
             created_at_in_sec=self.created_at_in_sec,
+            created_at=self.created_at,
             retweet_count=self.retweet_count,
             favorite_count=self.favorite_count
         )

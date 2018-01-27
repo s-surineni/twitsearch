@@ -25,6 +25,7 @@ class TweetIndex(DocType):
     user_name = Keyword()
     screen_name = Keyword()
     created_at_in_sec = Integer()
+    created_at = Date()
     retweet_count = Integer()
     favorite_count = Integer()
 
@@ -63,6 +64,7 @@ def convert_hits_to_dict(response):
         hit_dict['user_name'] = a_hit.user_name
         hit_dict['screen_name'] = a_hit.screen_name
         hit_dict['created_at_in_sec'] = a_hit.created_at_in_sec
+        hit_dict['created_at'] = a_hit.created_at
         hit_dict['retweet_count'] = a_hit.retweet_count
         hit_dict['favorite_count'] = a_hit.favorite_count
         hits_list.append(hit_dict)
@@ -98,9 +100,17 @@ def search_tweets_es(key, val, sort_by=None):
 
 def filter_tweets(field, value, order):
     if field in int_vals:
-        # f = F({'range': {'field': {order: value}}})
-        pass
-    s = Search().filter('range', **{field: {order: value}})
+        s = Search().filter('range', **{field: {order: value}})
+    response = s.execute()
+    response = convert_hits_to_dict(response)
+    return response
+
+
+def filter_tweets_by_date(date_range):
+    s = Search().filter('range', **{'created_at': {
+        "gte": date_range[0],
+        "lte": date_range[1]
+    }})
     response = s.execute()
     response = convert_hits_to_dict(response)
     return response
