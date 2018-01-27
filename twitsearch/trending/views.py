@@ -33,8 +33,11 @@ def search_tweets(request):
         values = request_params.get('values')
         response = filter_tweets('retweet_count', retweet_count, values)
     elif request_params.get('date'):
-        print('date: ', request_params.getlist('date'))
+        # print('date: ', request_params.getlist('date'))
         date_range = request_params.getlist('date')
         response = filter_tweets_by_date(date_range)
+    elif request_params.get('textSearch'):
+        text_search = request_params.getlist('textSearch')
+        response = filter_text_fields(text_search)
     # print('request.GET', request.GET)
     return HttpResponse(json.dumps(response))

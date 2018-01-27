@@ -114,3 +114,18 @@ def filter_tweets_by_date(date_range):
     response = s.execute()
     response = convert_hits_to_dict(response)
     return response
+
+
+def filter_text_fields(text_search):
+    query_dict = {
+        "query": {
+            "regexp": {
+               text_search[0]: "Ja.*"
+            }
+        }
+    }
+    s = Search.from_dict(query_dict)
+    print('search dict', s.to_dict())
+    response = s.execute()
+    response = convert_hits_to_dict(response)
+    return response
