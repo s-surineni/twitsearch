@@ -51,8 +51,25 @@ def search(name):
     response = s.execute()
     return response
 
+text_vals = ['screen_name', 'tweet_text', 'user_name']
+int_vals = ['created_at_in_sec', 'favorite_count', 'retweet_count']
 
-def match_tweet_text(key, val, sort_by=None):
+
+def convert_hits_to_dict(response):
+    hits_list = []
+    for a_hit in response:
+        hit_dict = {}
+        hit_dict['tweet_text'] = a_hit.tweet_text
+        hit_dict['user_name'] = a_hit.user_name
+        hit_dict['screen_name'] = a_hit.screen_name
+        hit_dict['created_at_in_sec'] = a_hit.created_at_in_sec
+        hit_dict['retweet_count'] = a_hit.retweet_count
+        hit_dict['favorite_count'] = a_hit.favorite_count
+        hits_list.append(hit_dict)
+    return hits_list
+
+
+def search_tweets_es(key, val, sort_by=None):
     text_vals = ['screen_name', 'tweet_text', 'user_name']
     # int_vals = ['created_at_in_sec', 'favorite_count', 'retweet_count']
     sort_dict = {'sort': {}}
@@ -75,14 +92,15 @@ def match_tweet_text(key, val, sort_by=None):
     s = Search.from_dict(query_dict)
     print('search dict', s.to_dict())
     response = s.execute()
-    hits_list = []
-    for a_hit in response:
-        hit_dict = {}
-        hit_dict['tweet_text'] = a_hit.tweet_text
-        hit_dict['user_name'] = a_hit.user_name
-        hit_dict['screen_name'] = a_hit.screen_name
-        hit_dict['created_at_in_sec'] = a_hit.created_at_in_sec
-        hit_dict['retweet_count'] = a_hit.retweet_count
-        hit_dict['favorite_count'] = a_hit.favorite_count
-        hits_list.append(hit_dict)
-    return hits_list
+    response = convert_hits_to_dict(response)
+    return response
+
+
+def filter_tweets(field, value, order):
+    if field in int_vals:
+        # f = F({'range': {'field': {order: value}}})
+        pass
+    s = Search().filter('range', **{field: {order: value}})
+    response = s.execute()
+    response = convert_hits_to_dict(response)
+    return response
